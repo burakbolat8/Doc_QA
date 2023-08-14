@@ -1,0 +1,12 @@
+CHUNK_OVERLAP: 50
+CHUNK_SIZE: 500
+DATA_PATH: data/test2
+DB_FAISS_PATH: vectorstore/test2
+EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
+ETURN_SOURCE_DOCUMENTS: true
+MAX_NEW_TOKENS: 256
+MODEL_BIN_PATH: models/llama-2-7b-chat.ggmlv3.q8_0.bin
+MODEL_TYPE: llama
+OPENAI_API_KEY: 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
+TEMPERATURE: 0.01
+VECTOR_COUNT: 2

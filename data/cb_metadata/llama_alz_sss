@@ -1,0 +1,8 @@
+chatbot: null
+embedding: sentence-transformers/all-MiniLM-L6-v2
+llm: Meta-Llama2
+max_tokens: 2048
+messages: []
+name: llama_alz_sss
+saved_chatbots: []
+temperature: 0.01
