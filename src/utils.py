@@ -11,8 +11,13 @@ from langchain.chains import RetrievalQA
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
+from langchain.chains import ConversationalRetrievalChain
+from langchain.memory import ConversationBufferMemory
+from langchain.chains import LLMChain
+from langchain.chains import create_qa_with_sources_chain
+from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 
-from src.prompts import qa_template
+from src.prompts import qa_template,condense_question_template
 from src.llm import build_llm
 
 # Import config vars
@@ -25,19 +30,50 @@ def set_qa_prompt():
     Prompt template for QA retrieval for each vectorstore
     """
     prompt = PromptTemplate(template=qa_template,
-                            input_variables=['context', 'question'])
+                            input_variables=['context','question'])
     return prompt
 
 
-def build_retrieval_qa(llm, prompt, vectordb):
+def build_retrieval_qa(llm, qa_prompt,condenser_prompt, memory,vectordb):
+    """
     dbqa = RetrievalQA.from_chain_type(llm=llm,
-                                       chain_type='stuff',
-                                       retriever=vectordb.as_retriever(search_kwargs={'k': cfg.VECTOR_COUNT}),
-                                       return_source_documents=cfg.RETURN_SOURCE_DOCUMENTS,
-                                       chain_type_kwargs={'prompt': prompt}
-                                       )
-    return dbqa
+                                        chain_type='stuff',
+                                        retriever=vectordb.as_retriever(search_kwargs={'k': cfg.VECTOR_COUNT}),
+                                        return_source_documents=cfg.RETURN_SOURCE_DOCUMENTS,
+                                        chain_type_kwargs={'prompt': qa_prompt}
+                                        )
+    """ 
+        
+    condense_question_chain = LLMChain(
+        llm=llm,
+        prompt=condenser_prompt,
+    )
 
+    qa_chain = create_qa_with_sources_chain(llm)
+
+    final_qa_chain = StuffDocumentsChain(
+        llm_chain=qa_chain,
+        document_variable_name="context",
+        document_prompt=qa_prompt,
+    )
+    """
+    dbqa = ConversationalRetrievalChain.from_llm(
+        llm=llm,
+        memory=memory,
+        retriever=vectordb.as_retriever(search_kwargs={'k': cfg.VECTOR_COUNT}),
+        return_source_documents=True,
+        question_generator=condense_question_chain,
+        #combine_docs_chain_kwargs={'prompt': qa_prompt}
+    )
+    """
+    dbqa = ConversationalRetrievalChain(
+        question_generator=condense_question_chain,
+        retriever=vectordb.as_retriever(search_kwargs={'k': cfg.VECTOR_COUNT}),
+        memory=memory,
+        combine_docs_chain=final_qa_chain,
+    )
+
+    return dbqa
 
 def setup_dbqa():
 
@@ -50,6 +86,13 @@ def setup_dbqa():
     vectordb = FAISS.load_local(cfg.DB_FAISS_PATH, embeddings)
     llm = build_llm()
     qa_prompt = set_qa_prompt()
-    dbqa = build_retrieval_qa(llm, qa_prompt, vectordb)
+    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+    condenser_prompt = PromptTemplate.from_template(condense_question_template)
+
+
+    dbqa = build_retrieval_qa(llm, qa_prompt,condenser_prompt, memory,vectordb)
+
+
 
     return dbqa

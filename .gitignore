@@ -1,3 +1,9 @@
+#data
+data/*
+
+#vectorstores
+vectorstores/*
+
 # GGML Models
 models/*.bin
 

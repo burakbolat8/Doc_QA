@@ -89,53 +89,7 @@ max_tokens = c2.slider("Maximum length",1,4000,2048,key="max_tokens")
 
 initiated = c2.button("Initiate")
 
-
-# CHAT INTERFACE
-
-c1.subheader(st.session_state.chatbot)
-
-# Initialize chat hitory
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Display chat messages from history on app rerun
-for message in st.session_state.messages:
-    with c1.chat_message(message["role"]):
-        c1.markdown(message["content"])
-
-# Accept user input
-if prompt := st.chat_input("What is up?"):
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    # Display user message in chat message container
-    with c1.chat_message("user"):
-        c1.markdown(prompt)
-
-    # Display assistant response in chat message container
-    with c1.chat_message("assistant"):
-        message_placeholder = c1.empty()
-        full_response = ""
-        assistant_response = random.choice(
-            [
-                "Hello there! How can I assist you today?",
-                "Hi, human! Is there anything I can help you with?",
-                "Do you need help?",
-            ]
-        )
-        # Simulate stream of response with milliseconds delay
-        for chunk in assistant_response.split():
-            full_response += chunk + " "
-            time.sleep(0.05)
-            # Add a blinking cursor to simulate typing
-            message_placeholder.markdown(full_response + "▌")
-        message_placeholder.markdown(full_response)
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
-
 #FUNCTIONALITY
-
-
-
 
 if created:
 
@@ -201,22 +155,55 @@ if initiated:
     with open(f"data/cb_metadata/{st.session_state.chatbot}", 'r', encoding='utf8') as chat_metadata:
         cbmd = yaml.safe_load(chat_metadata)
 
-    st.write(cbmd['llm'])
-
     if cbmd['llm'].startswith('OpenAI'):
         cfg['MODEL_TYPE'] = "openai"
         cfg['OPENAI_API_KEY'] = cbmd['openai_api']
 
-    cfg["DB_FAISS_PATH "] = f"vectorstore/{cbmd['name']}"
-    cfg["EMBEDDING"] = cbmd['embedding'] 
+    cfg["DB_FAISS_PATH"] = f"vectorstore/{cbmd['name']}"
+    cfg["EMBEDDING_MODEL"] = cbmd['embedding'] 
 
 
     with open('config/config.yml', 'w', encoding='utf8') as ymlfile:
         ymlfile.write(yaml.dump(cfg))
     
-
-    
-
     with st.spinner('Initiating chatbot...'):
         dbqa = setup_dbqa()
     st.success("Successfully initiated")
+
+    # CHAT INTERFACE
+
+    c1.subheader(st.session_state.chatbot)
+
+    # Initialize chat hitory
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    # Display chat messages from history on app rerun
+    for message in st.session_state.messages:
+        with c1.chat_message(message["role"]):
+            c1.markdown(message["content"])
+
+    # Accept user input
+    prompt = st.chat_input("Ask here?")
+    if prompt:
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        # Display user message in chat message container
+        with c1.chat_message("user"):
+            c1.markdown(prompt)
+
+        # Display assistant response in chat message container
+        with c1.chat_message("assistant"):
+            message_placeholder = c1.empty()
+            full_response = ""
+            assistant_response = dbqa({'query': prompt})
+
+            # Simulate stream of response with milliseconds delay
+            for chunk in assistant_response.split():
+                full_response += chunk + " "
+                time.sleep(0.05)
+                # Add a blinking cursor to simulate typing
+                message_placeholder.markdown(full_response + "▌")
+            message_placeholder.markdown(full_response)
+        # Add assistant response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": full_response})
