@@ -191,7 +191,13 @@ if created:
 
     
 if initiated:
-
+    st.session_state.messages = []
+    st.session_state.messages.append({"role": "assistant", "content": "How can I help you?"})
+    
+    for message in st.session_state.messages:
+        with c1.chat_message(message["role"]):
+            c1.markdown(message["content"])
+        
     with open(f"data/cb_metadata/{st.session_state.chatbot}", 'r', encoding='utf8') as chat_metadata:
         cbmd = yaml.safe_load(chat_metadata)
 
@@ -211,5 +217,5 @@ if initiated:
     st.success("Successfully initiated")
     st.session_state.dbqa = dbqa
 
-    welcome_message = "How can I help you?"
+
 

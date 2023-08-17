@@ -113,7 +113,7 @@ def setup_dbqa():
     llm = build_llm()
     qa_prompt = set_qa_prompt()
     condenser_prompt = set_condenser_prompt()
-    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    memory = ConversationBufferMemory(memory_key="chat_history",input_key='question', output_key='answer', return_messages=True)
 
     dbqa = build_retrieval_qa(llm, qa_prompt,condenser_prompt, memory,retriever)
 

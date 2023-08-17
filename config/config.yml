@@ -1,7 +1,7 @@
 CHUNK_OVERLAP: 50
 CHUNK_SIZE: 500
-DATA_PATH: data/gpt_alz_sss
-DB_FAISS_PATH: vectorstore/gpt_alz_sss
+DATA_PATH: data/gpt_alz_mdsg
+DB_FAISS_PATH: vectorstore/gpt_alz_mdsg
 EMBEDDING_MODEL: OpenAI/text-embedding-ada-002
 MAX_NEW_TOKENS: 256
 MODEL_BIN_PATH: models/llama-2-7b-chat.ggmlv3.q8_0.bin
