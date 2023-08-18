@@ -102,6 +102,10 @@ def build_retrieval_qa(llm, qa_prompt,condenser_prompt, memory,retriever):
 
 def setup_dbqa():
 
+    with open('config/config.yml', 'r', encoding='utf8') as ymlfile:
+        cfg = box.Box(yaml.safe_load(ymlfile))
+
+
     if cfg.EMBEDDING_MODEL.startswith("OpenAI"):
         embeddings = OpenAIEmbeddings()
     else:
