@@ -1,11 +1,8 @@
 #data
 data/*
 
-#vectorstores
-vectorstores/*
-
 # GGML Models
-models/*.bin
+models/*
 
 # PPT decks
 *.pptx
