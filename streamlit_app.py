@@ -192,7 +192,7 @@ if created:
     
 if initiated:
     st.session_state.messages = []
-    st.session_state.messages.append({"role": "assistant", "content": "How can I help you?"})
+    st.session_state.messages.append({"role": "assistant", "content": "Merhaba, size nasıl yardımcı olabilirim?"})
     
     for message in st.session_state.messages:
         with c1.chat_message(message["role"]):
