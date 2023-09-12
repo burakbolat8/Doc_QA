@@ -3,7 +3,7 @@
 # =========================
 import box
 import yaml
-
+import os 
 import streamlit as st
 from langchain.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -29,6 +29,7 @@ def run_db_build():
     texts = text_splitter.split_documents(documents)
 
     if cfg.EMBEDDING_MODEL.startswith("OpenAI"):
+        os.environ['OPENAI_API_KEY'] = cfg.OPENAI_API_KEY
         embeddings = OpenAIEmbeddings()
     else:
         embeddings = HuggingFaceEmbeddings(model_name=cfg.EMBEDDING_MODEL,

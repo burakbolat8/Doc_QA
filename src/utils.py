@@ -5,6 +5,7 @@
 '''
 import box
 import yaml
+import os 
 
 from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
@@ -107,6 +108,7 @@ def setup_dbqa():
 
 
     if cfg.EMBEDDING_MODEL.startswith("OpenAI"):
+        os.environ['OPENAI_API_KEY'] = cfg.OPENAI_API_KEY
         embeddings = OpenAIEmbeddings()
     else:
         embeddings = HuggingFaceEmbeddings(model_name=cfg.EMBEDDING_MODEL,

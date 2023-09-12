@@ -204,6 +204,7 @@ if initiated:
     if cbmd['llm'].startswith('OpenAI'):
         cfg['MODEL_TYPE'] = "openai"
         cfg['OPENAI_API_KEY'] = cbmd['openai_api']
+        
 
     cfg["DB_FAISS_PATH"] = f"vectorstore/{cbmd['name']}"
     cfg["EMBEDDING_MODEL"] = cbmd['embedding'] 
