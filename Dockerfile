@@ -16,7 +16,7 @@ RUN wget -N -P ./models https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/res
 
 RUN git clone https://github.com/burakbolat8/Doc_QA.git 
 
-RUN mv ./Doc_QA/* ./app
+RUN mv ./Doc_QA/* ./app/
 
 RUN python -m pip install --upgrade pip
 
