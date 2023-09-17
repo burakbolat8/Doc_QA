@@ -68,23 +68,21 @@ created = st.sidebar.button("Create",on_click=saved_chatbots_updater)
 c1,c2 = st.columns([0.7, 0.3],gap='medium')
 
 
-# CHAT OPTIONS 
+# CHAT OPTIONS - As a Streamlit Form
 
-c2.subheader('Initiate Chatbot')
+with c2.form("chat_options_form"):
+    c2.subheader('Initiate Chatbot')
+    
+    chatbot_options = st.selectbox(
+        'Select a chatbot',
+        st.session_state.saved_chatbots,
+        key='chatbot'
+    )
 
-
-chatbot_options = c2.selectbox(
-    'Select a chatbot',
-    st.session_state.saved_chatbots,
-    key='chatbot'
-
-)
-
-temperature = c2.slider('Temperature', 0.0, 1.0 , 0.01,key="temperature")
-
-max_tokens = c2.slider("Maximum length",1,4000,2048,key="max_tokens")
-
-initiated = c2.button("Initiate")
+    temperature = st.slider('Temperature', 0.0, 1.0 , 0.01, key="temperature")
+    max_tokens = st.slider("Maximum length", 1, 4000, 2048, key="max_tokens")
+    
+    initiated = st.form_submit_button("Initiate")
 
 # CHAT INTERFACE
 
