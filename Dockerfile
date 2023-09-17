@@ -10,13 +10,13 @@ RUN apt-get update && apt-get install -y gcc python3-dev \
 # Set the working directory inside the container
 WORKDIR /app
 
-RUN git clone https://github.com/burakbolat8/Doc_QA.git app
-
 RUN mkdir ./models
 
 RUN wget -N -P ./models https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/resolve/main/llama-2-7b-chat.ggmlv3.q8_0.bin
 
-#RUN cp /model_files/* /app/models/
+RUN git clone https://github.com/burakbolat8/Doc_QA.git 
+
+RUN mv ./Doc_QA/* ./app
 
 RUN python -m pip install --upgrade pip
 
