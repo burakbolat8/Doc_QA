@@ -39,6 +39,6 @@ def build_llm():
                                 config={'max_new_tokens': cfg.MAX_NEW_TOKENS,
                                         'temperature': cfg.TEMPERATURE}
                                 )
-    print(llm)
+    #print(llm)
         
     return llm
