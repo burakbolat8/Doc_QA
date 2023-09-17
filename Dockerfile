@@ -12,7 +12,11 @@ WORKDIR /app
 
 RUN git clone https://github.com/burakbolat8/Doc_QA.git app
 
-RUN wget -P ./models/ https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/resolve/main/llama-2-7b-chat.ggmlv3.q8_0.bin
+RUN mkdir ./models
+
+RUN wget -N -P ./models https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/resolve/main/llama-2-7b-chat.ggmlv3.q8_0.bin
+
+#RUN cp /model_files/* /app/models/
 
 RUN python -m pip install --upgrade pip
 
