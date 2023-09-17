@@ -73,9 +73,6 @@ c1,c2 = st.columns([0.7, 0.3],gap='medium')
 c2.subheader('Initiate Chatbot')
 
 
-
-
-
 chatbot_options = c2.selectbox(
     'Select a chatbot',
     st.session_state.saved_chatbots,
@@ -193,15 +190,10 @@ if created:
 if initiated:
     st.session_state.messages = []
     st.session_state.messages.append({"role": "assistant", "content": "Merhaba, size nasıl yardımcı olabilirim?"})
-    
-    for message in st.session_state.messages:
-        with c1.chat_message(message["role"]):
-            c1.markdown(message["content"])
+
         
     with open(f"data/cb_metadata/{st.session_state.chatbot}", 'r', encoding='utf8') as chat_metadata:
         cbmd = yaml.safe_load(chat_metadata)
-    
-    st.write(cbmd)
     
     if cbmd['llm'].startswith('OpenAI'):
         cfg['MODEL_TYPE'] = "openai"
@@ -219,8 +211,13 @@ if initiated:
     
     with st.spinner('Initiating chatbot...'):
         dbqa = setup_dbqa()
+    
     st.success("Successfully initiated")
+    
     st.session_state.dbqa = dbqa
 
+    for message in st.session_state.messages:
+        with c1.chat_message(message["role"]):
+            c1.markdown(message["content"]) 
 
 
