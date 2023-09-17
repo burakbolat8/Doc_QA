@@ -2,25 +2,26 @@
 FROM python:3.10-slim-buster
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y gcc python3-dev
+RUN apt-get update && apt-get install -y gcc python3-dev \
+    git \
+    wget 
 
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements.txt file into the container
-COPY requirements.txt .
+RUN git clone https://github.com/burakbolat8/Doc_QA.git app
 
-# Install any needed packages specified in requirements.txt
+RUN mkdir ./models
+
+RUN wget -N -P ./models https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/resolve/main/llama-2-7b-chat.ggmlv3.q8_0.bin
+
+#RUN cp /model_files/* /app/models/
+
 RUN python -m pip install --upgrade pip
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port 40017 for Streamlit
-EXPOSE 40017
+EXPOSE 8501
 
-# Copy the rest of the files from your current directory to /app in the container
-COPY . .
-
-# Define the command to run your Streamlit app on port 40017
-CMD ["streamlit", "run", "streamlit_app.py", "--server.port", "40017"]
+CMD ["streamlit", "run", "streamlit_app.py", "--server.port", "8501"]
