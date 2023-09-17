@@ -68,66 +68,22 @@ created = st.sidebar.button("Create",on_click=saved_chatbots_updater)
 c1,c2 = st.columns([0.7, 0.3],gap='medium')
 
 
-# CHAT OPTIONS 
-
+# CHAT OPTIONS - As a Streamlit Form
 c2.subheader('Initiate Chatbot')
 
+with c2.form("chat_options_form"):
 
+    
+    chatbot_options = st.selectbox(
+        'Select a chatbot',
+        st.session_state.saved_chatbots,
+        key='chatbot'
+    )
 
-
-
-chatbot_options = c2.selectbox(
-    'Select a chatbot',
-    st.session_state.saved_chatbots,
-    key='chatbot'
-
-)
-
-temperature = c2.slider('Temperature', 0.0, 1.0 , 0.01,key="temperature")
-
-max_tokens = c2.slider("Maximum length",1,4000,2048,key="max_tokens")
-
-initiated = c2.button("Initiate")
-
-# CHAT INTERFACE
-
-c1.subheader(st.session_state.chatbot)
-
-# Initialize chat hitory
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Display chat messages from history on app rerun
-for message in st.session_state.messages:
-    with c1.chat_message(message["role"]):
-        c1.markdown(message["content"])
-
-# Accept user input
-if prompt := st.chat_input("Ask here?"):
-
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    # Display user message in chat message container
-    with c1.chat_message("user"):
-        c1.markdown(prompt)
-
-    # Display assistant response in chat message container
-    with c1.chat_message("assistant"):
-        message_placeholder = c1.empty()
-        full_response = ""
-        response =  st.session_state.dbqa({'question': prompt})
-        assistant_response = response["answer"]
-
-        # Simulate stream of response with milliseconds delay
-        for chunk in assistant_response.split():
-            full_response += chunk + " "
-            time.sleep(0.05)
-            # Add a blinking cursor to simulate typing
-            message_placeholder.markdown(full_response + "▌")
-        message_placeholder.markdown(full_response)
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
-
+    temperature = st.slider('Temperature', 0.0, 1.0 , 0.01, key="temperature")
+    max_tokens = st.slider("Maximum length", 1, 4000, 2048, key="max_tokens")
+    
+    initiated = st.form_submit_button("Initiate")
 
 #FUNCTIONALITY
 
@@ -191,17 +147,13 @@ if created:
 
     
 if initiated:
+
     st.session_state.messages = []
     st.session_state.messages.append({"role": "assistant", "content": "Merhaba, size nasıl yardımcı olabilirim?"})
-    
-    for message in st.session_state.messages:
-        with c1.chat_message(message["role"]):
-            c1.markdown(message["content"])
+
         
     with open(f"data/cb_metadata/{st.session_state.chatbot}", 'r', encoding='utf8') as chat_metadata:
         cbmd = yaml.safe_load(chat_metadata)
-    
-    st.write(cbmd)
     
     if cbmd['llm'].startswith('OpenAI'):
         cfg['MODEL_TYPE'] = "openai"
@@ -219,8 +171,45 @@ if initiated:
     
     with st.spinner('Initiating chatbot...'):
         dbqa = setup_dbqa()
+    
     st.success("Successfully initiated")
+    
     st.session_state.dbqa = dbqa
 
+    st.experimental_rerun()
+# CHAT INTERFACE
+c1.subheader(st.session_state.chatbot)
+# Initialize chat hitory
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with c1.chat_message(message["role"]):
+        c1.markdown(message["content"])
 
+# Accept user input
+if prompt := st.chat_input("Ask here?"):
+
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    # Display user message in chat message container
+    with c1.chat_message("user"):
+        c1.markdown(prompt)
+
+    # Display assistant response in chat message container
+    with c1.chat_message("assistant"):
+        message_placeholder = c1.empty()
+        full_response = ""
+        response =  st.session_state.dbqa({'question': prompt})
+        assistant_response = response["answer"]
+
+        # Simulate stream of response with milliseconds delay
+        for chunk in assistant_response.split():
+            full_response += chunk + " "
+            time.sleep(0.05)
+            # Add a blinking cursor to simulate typing
+            message_placeholder.markdown(full_response + "▌")
+        message_placeholder.markdown(full_response)
+    # Add assistant response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": full_response})
