@@ -1,8 +1,8 @@
 CHUNK_OVERLAP: 50
 CHUNK_SIZE: 500
 DATA_PATH: data/llama_alz_mdsg
-DB_FAISS_PATH: vectorstore/llama_alz_mdsg
-EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
+DB_FAISS_PATH: vectorstore/gpt_alz_mdsg
+EMBEDDING_MODEL: OpenAI/text-embedding-ada-002
 MAX_NEW_TOKENS: 256
 MODEL_BIN_PATH: models/llama-2-13b-chat.ggmlv3.q4_0.bin
 MODEL_TYPE: openai

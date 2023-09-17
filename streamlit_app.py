@@ -2,7 +2,7 @@ import streamlit as st
 import yaml
 import os 
 import time 
-import random
+
 
 
 from langchain.vectorstores import FAISS
@@ -200,10 +200,14 @@ if initiated:
         
     with open(f"data/cb_metadata/{st.session_state.chatbot}", 'r', encoding='utf8') as chat_metadata:
         cbmd = yaml.safe_load(chat_metadata)
-
+    
+    st.write(cbmd)
+    
     if cbmd['llm'].startswith('OpenAI'):
         cfg['MODEL_TYPE'] = "openai"
         cfg['OPENAI_API_KEY'] = cbmd['openai_api']
+    else:
+        cfg['MODEL_TYPE'] = "llama"
         
 
     cfg["DB_FAISS_PATH"] = f"vectorstore/{cbmd['name']}"
