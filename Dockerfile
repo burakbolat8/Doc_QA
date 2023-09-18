@@ -14,7 +14,7 @@ RUN mkdir ./models
 
 RUN wget -N -P ./models https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/resolve/main/llama-2-7b-chat.ggmlv3.q8_0.bin
 
-RUN --no-cache-dir git clone https://github.com/burakbolat8/Doc_QA.git /Doc_QA
+RUN git clone https://github.com/burakbolat8/Doc_QA.git /Doc_QA
 
 RUN mv /Doc_QA/* .
 
