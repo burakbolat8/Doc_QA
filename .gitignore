@@ -1,5 +1,6 @@
 #data
 #data/*
+config
 
 # GGML Models
 models/

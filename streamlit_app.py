@@ -55,6 +55,7 @@ if ((llm_option == "OpenAI-GPT3") | (embedding_option == "OpenAI/text-embedding-
     openai_api_key = st.sidebar.text_input(
         placeholder="Enter an openai api key..",
         label= "OpenAI API",
+        type="password",
         key="openai_api"
     )
 
@@ -106,7 +107,7 @@ if created:
             else:
                 cfg['MODEL_TYPE'] = "openai"
                 cfg['OPENAI_API_KEY'] = st.session_state.openai_api
-
+                #os.environ['OPENAI_API_KEY'] = st.session_state.openai_api
         else:
             cfg['MODEL_TYPE'] = 'llama'
         
