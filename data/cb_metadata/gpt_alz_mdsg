@@ -1,0 +1,11 @@
+chatbot: llama_alz_mdsg
+embedding: OpenAI/text-embedding-ada-002
+llm: OpenAI-GPT3
+max_tokens: 2048
+messages: []
+name: gpt_alz_mdsg
+saved_chatbots:
+- llama_alz_mdsg
+- gpt_alz_sss
+- llama_alz_sss
+temperature: 0.01

@@ -1,6 +1,9 @@
 data
 #data/*
-config
+
+key
+
+config/
 
 # GGML Models
 models/

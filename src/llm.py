@@ -28,7 +28,7 @@ def build_llm():
     
     if cfg.MODEL_TYPE == 'openai':
 
-        os.environ['OPENAI_API_KEY'] = cfg.OPENAI_API_KEY
+        #os.environ['OPENAI_API_KEY'] = cfg.OPENAI_API_KEY
 
         llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=cfg.TEMPERATURE)
 

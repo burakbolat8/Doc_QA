@@ -27,10 +27,14 @@ with open('config/config.yml', 'r', encoding='utf8') as ymlfile:
 
 
 def set_qa_prompt():
+    with open('config/config.yml', 'r', encoding='utf8') as ymlfile:
+        cfg = box.Box(yaml.safe_load(ymlfile))
+
     """
     Prompt template for QA retrieval for each vectorstore
     """
-    prompt = PromptTemplate(template=qa_template,
+ 
+    prompt = PromptTemplate(template=cfg.CUSTOM_PROMPT + qa_template,
                             input_variables=['context','question'])
     return prompt
 
@@ -108,7 +112,7 @@ def setup_dbqa():
 
 
     if cfg.EMBEDDING_MODEL.startswith("OpenAI"):
-        os.environ['OPENAI_API_KEY'] = cfg.OPENAI_API_KEY
+        #os.environ['OPENAI_API_KEY'] = cfg.OPENAI_API_KEY
         embeddings = OpenAIEmbeddings()
     else:
         embeddings = HuggingFaceEmbeddings(model_name=cfg.EMBEDDING_MODEL,

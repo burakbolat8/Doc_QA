@@ -4,19 +4,16 @@ import os
 import time 
 
 
-
-from langchain.vectorstores import FAISS
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import PyPDFLoader, DirectoryLoader
-from langchain.embeddings import HuggingFaceEmbeddings
-
-
 from db_build import run_db_build
 from src.utils import setup_dbqa
 
 # Import config vars
 with open('config/config.yml', 'r', encoding='utf8') as ymlfile:
     cfg = yaml.safe_load(ymlfile)
+
+with open("key", "r") as f:
+    os.environ['OPENAI_API_KEY'] = f.read().strip()
+
 
 #SAVED CHATBOTS 
 st.session_state.saved_chatbots = os.listdir('vectorstore')
@@ -34,7 +31,7 @@ st.sidebar.divider()
 
 st.sidebar.subheader('Create Chatbot')
 
-chatbot_form = st.sidebar.form("chatbot_form")
+#chatbot_form = st.sidebar.form("chatbot_form")
 
 uploaded_files = st.sidebar.file_uploader("Choose file/s", accept_multiple_files=True)
 
@@ -51,13 +48,6 @@ embedding_option = st.sidebar.selectbox(
 )
 
 
-if ((llm_option == "OpenAI-GPT3") | (embedding_option == "OpenAI/text-embedding-ada-002")):
-    openai_api_key = st.sidebar.text_input(
-        placeholder="Enter an openai api key..",
-        label= "OpenAI API",
-        type="password",
-        key="openai_api"
-    )
 
 chatbot_name = st.sidebar.text_input(label="Chatbot Name",key="name")
 
@@ -83,6 +73,8 @@ with c2.form("chat_options_form"):
 
     temperature = st.slider('Temperature', 0.0, 1.0 , 0.01, key="temperature")
     max_tokens = st.slider("Maximum length", 1, 4000, 2048, key="max_tokens")
+
+    custom_prompt = st.text_input("Custom Prompt",value="You are a kind and helpful assistant chatbot for Allianz insurance company.",key="custom_prompt")
     
     initiated = st.form_submit_button("Initiate")
 
@@ -99,18 +91,13 @@ if created:
         if not st.session_state.name:
             st.warning("Please provide a name for your chatbot!")
             st.stop()        
-
-        if st.session_state.llm.startswith('OpenAI'):
-            if not st.session_state.openai_api:
-                st.warning("Please provide an API key or choose an opensource model!")
-                st.stop()
-            else:
-                cfg['MODEL_TYPE'] = "openai"
-                cfg['OPENAI_API_KEY'] = st.session_state.openai_api
-                #os.environ['OPENAI_API_KEY'] = st.session_state.openai_api
+        
+        
+        if st.session_state.llm.startswith('OpenAI'):      
+            cfg['MODEL_TYPE'] = "openai"
         else:
             cfg['MODEL_TYPE'] = 'llama'
-        
+            
 
         cfg["DATA_PATH"] = f"data/{st.session_state.name}"
         cfg["DB_FAISS_PATH"] = f"vectorstore/{st.session_state.name}"
@@ -158,13 +145,14 @@ if initiated:
     
     if cbmd['llm'].startswith('OpenAI'):
         cfg['MODEL_TYPE'] = "openai"
-        cfg['OPENAI_API_KEY'] = cbmd['openai_api']
+
     else:
         cfg['MODEL_TYPE'] = "llama"
         
 
     cfg["DB_FAISS_PATH"] = f"vectorstore/{cbmd['name']}"
     cfg["EMBEDDING_MODEL"] = cbmd['embedding'] 
+    cfg["CUSTOM_PROMPT"] = st.session_state.custom_prompt
 
 
     with open('config/config.yml', 'w', encoding='utf8') as ymlfile:
