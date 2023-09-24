@@ -1,0 +1,13 @@
+FormSubmitter:chat_options_form-Initiate: false
+chatbot: gpt_alz_mdsg
+custom_prompt: You are a kind and helpful assistant chatbot for Allianz insurance
+  company.
+embedding: OpenAI/text-embedding-ada-002
+llm: OpenAI-GPT3
+max_tokens: 2048
+messages: []
+name: gpt_alz_motor
+saved_chatbots:
+- gpt_alz_mdsg
+- llama_alz_mdsg
+temperature: 0.01
